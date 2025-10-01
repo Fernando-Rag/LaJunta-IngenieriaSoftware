@@ -71,7 +71,7 @@ Funcionales:
 
 6-Chat Privado
 
--El usuario debe poder enviar mensajes privados a otros participantes de la reunión
+-El usuario debe poder enviar mensajes privados a otros usuarios.
 
 7-Notificaciones
 
