@@ -1,3 +1,4 @@
+
 # LaJunta-IngenieriaSoftware
 aplicacion mobil para android y appel  para crear una reunion en la sede inacap, con la principal funcion de juntar a las personas para ir a tomar el trasporte publico acompañado
 
@@ -48,44 +49,71 @@ Este proyecto tiene como idea principal crear una apliacion mobil para nuestra i
 1-Registro y Autenticación
 
 -El sistema debe permitir el registro de usuarios mediante correo institucional
--El sistema debe autenticar usuarios y permitir el acceso a la app según su rol (estudiante, maestro, trabajador)
+
+-El sistema debe autenticar usuario
+    -No abra diferencia si son maestro, estudiantes o trabajadores ya que esta es una aplicacion para mantener la seguridad de la personas no hacer vida social. mantener la integridad y seguridad de los usuarios es la prioridad numero 1, de todas formas si los profesores quieren irse con profesores o los estudiantes solo con estudiantes pueden ver el rol en el perfil para decidir si quieren ir o no con esa persona. es a criterio de cada persona.
 
 2-Gestión de Perfil
 
--El usuario debe poder editar su perfil, incluyendo su nombre, rol, sede, hora de salida y destino habitual
+-El usuario debe poder editar su perfil, incluyendo su nombre, rol(Estudiante,Docente,Trabajador, etc.), sede,
+destino habitual, pero el correo institucional no se puede editar ya que tiene que tener el correo de inacap para poder acceder
+
 
 3-Creación y Gestión de Reuniones/Juntas
 
--El sistema debe permitir crear una reunión indicando lugar de encuentro, hora y destino (paradero)
+-El sistema debe permitir crear una reunión indicando lugar de encuentro
+
+    - Esta reunion se hace en la sede, para evitar exponer a los usuarios fuera de la sede
+    - Tambien se pueden hacer mediante un acuerdo por un chat privado, Ejemplo: boton de crear reunion, muestra los campos lugar de reunion y hora de reunion, esta funcion tambien estara para los chats globales
+    - Tambien lococar el punto de la reunion ocupando Ubicación precisa/exacta (GPS y otros sensores activos), para que los usuarios puedan llegar usando el servicio seleccionado en este caso MapBox, esta funcion se llamara "Punto de encuentro con GPS" esta funcion tambien estara para los chats privados y globales, una vez se seleccione el lugar de encuentro tienen que poner la hora de encuentro ejemplo: UbicacioS Reunion por gps y Hora de reunion
+    
+
 -El sistema debe mostrar una lista de reuniones disponibles filtradas por hora de salida y destino
 
-4-Filtros y Búsqueda
+4-Filtros y Búsqueda, Chat Global y por Destino
 
 -El usuario debe poder filtrar reuniones por hora y destino
 -El sistema debe permitir buscar reuniones activas en el rango horario deseado
 
-5-Chat Global y por Destino
+    -Usuario abre "Seleccionar destino / paradero".
+    -Se abre un modal o pantalla con mapa centrado en la sede INACAP y marcadores de paraderos cercanos (radio configurable: p.ej. 400m).
+    -Usuario:
+    -puede tocar un marcador para ver tarjeta del paradero (nombre, distancia, ID).
+    -en la tarjeta hay botón "Ver micros" (o al tocar el marcador se abre directamente).
+    -Se abre una vista lista de micros que pasan por ese paradero (ej: 307, 301, B28) con casillas de selección (multi-select).
+    -Usuario selecciona 1 o varias micros y confirma "Usar estas micros".
+    -La app guarda la selección como destino filtrado y abre la pantalla de chats del paradero:
+    -Barra superior: botones para alternar entre cada micro seleccionada (si más de una).
+    -Sub-barra/segmented control: selección de hora (08:00–09:00, 09:00–10:00, ... hasta 23:00–24:00).
+    -Lista de mensajes del chat correspondiente a (paradero, micro, hora).
+    -El usuario puede:
+    -publicar convocatoria en ese chat,
+    -responder y abrir chat privado,
+    -cambiar micro con los botones superiores,
+    -cambiar hora con el control horario.
 
--El sistema debe ofrecer seleccionar el destino o paradero para luego mostrar los chats globales
--El sistema debe ofrecer chats globales para usuarios que salen en el rango de horario seleccionado
+    UX adicional:
+    -Si el usuario no seleccionó micros: mostrar "Chats globales del paradero" (agrupar por hora pero sin filtrar por micro).
+    -Mostrar contador de participantes por chat (nº usuarios activos/suscritos) si se puede.
+    -Guardar micro(s) por defecto en perfil para atajo (opcional).
 
-6-Chat Privado
+5-Chat Privado
 
 -El usuario debe poder enviar mensajes privados a otros usuarios.
 
-7-Notificaciones
+6-Notificaciones
 
 -El sistema debe enviar notificaciones cuando se acerca la hora de salida o cuando hay mensajes nuevos
 
-8-Gestión de Seguridad
+7-Gestión de Seguridad
 
 -El sistema debe permitir reportar usuarios o mensajes inapropiados
 -El usuario debe poder bloquear o evitar interacción con otros usuarios
 
-9-Privacidad
+8-Privacidad
 
--El usuario debe poder decidir qué datos personales aparecen en su perfil visible
-
+-El usuario debe poder decidir qué datos personales aparecen en su perfil visible, todos menos su rol(Estudiante, Docente, Etc)
+ y su correo institucional 
 
 ## No Funcionales:
 
@@ -127,7 +155,6 @@ Este proyecto tiene como idea principal crear una apliacion mobil para nuestra i
 -El sistema debe realizar respaldos automáticos de la base de datos y permitir la recuperación ante fallos
 
 
-
 ## Notas para el desarrollo ##
 
 
@@ -138,7 +165,7 @@ Página de inicio de sesión : La página de inicio de sesión única tiene un f
 Integración con servicios de Microsoft : La federación de identidad se utiliza para gestionar el acceso a productos de Microsoft como Office 365, lo que confirma la implementación de AD FS para este propósito. 
 En resumen, AD FS permite a INACAP proporcionar un inicio de sesión única (SSO) seguro para sus estudiantes y colaboradores, utilizando sus credenciales institucionales para acceder a diversas plataformas. 
 
--Nunca pidas ni almacenes la contraseña institucional en tu backend/app si existe un IdP: siempre redirigir al IdP (SSO).
+-Nunca pedir ni almacenar la contraseña institucional en el backend/app si existe un IdP: siempre redirigir al IdP (SSO).
 -Usar OAuth2/OIDC con PKCE en móviles.
 -Almacenar tokens en almacenamiento seguro: Keychain (iOS) / EncryptedSharedPreferences o Keystore (Android).
 -Usar HTTPS en todas las comunicaciones.
