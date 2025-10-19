@@ -1,12 +1,12 @@
 # LaJunta-IngenieriaSoftware
-aplicacion para crear una reunion en la sede inacap, con la principal funcion de juntar a las personas para ir a tomar el trasporte publico acompañado
+aplicacion mobil para android y appel  para crear una reunion en la sede inacap, con la principal funcion de juntar a las personas para ir a tomar el trasporte publico acompañado
 
-Descripcion Breve:
+## Descripcion Breve: ##
 
 Este proyecto tiene como idea principal crear una apliacion mobil para nuestra institucion inacap, la aplicacion consiste en que los estudiantes maestros y trabajadores de la sede puedan acceder y crear una reunion a su hora de salida de la sede, esta reunion o junta puede ser en cualquier lugar de la institucion y a cualquier hora, el proposito de la aplicacion es que luego de que se junten las personas vayan al paradero del trasporte publico acompañados, por lo que obvio deberia contar con filtros como, donde se dirige la persona y a que hora sale de su clase o de su horario laboral teniendo chats como de 3pm a 4pm de 4pm a 5pm  teniendo chat global de la hora seleccionada de los que salen a esa hora preguntando quien sale a esa hora para ir a tomar el paradero en comun juntos, dejando que cualquiera responda y dandole click a la respuesta se le puede mandar un mensaje privado permitiendo decidir donde juntarse y a que hora exacta.
 
 
-Funciones principales
+## Funciones principales ##
 
 1-Registro y autenticación
 
@@ -31,7 +31,7 @@ Funciones principales
 -Reportar usuarios o mensajes inapropiados
 
 
-Flujo de uso principal:
+## Flujo de uso principal ##
 
 -El usuario ingresa y selecciona su horario de salida y destino.
 -Puede ver quién más sale a esa hora y va al mismo lugar.
@@ -41,9 +41,9 @@ Flujo de uso principal:
 
 
 
-Requerimientos funcionales y no funcionales identificados por el grupo
+## Requerimientos funcionales y no funcionales identificados por el grupo
 
-Funcionales:
+## Funcionales:
 
 1-Registro y Autenticación
 
@@ -87,7 +87,7 @@ Funcionales:
 -El usuario debe poder decidir qué datos personales aparecen en su perfil visible
 
 
-No Funcionales:
+## No Funcionales:
 
 1-Usabilidad
 
@@ -125,3 +125,47 @@ No Funcionales:
 9-Backup y Recuperación
 
 -El sistema debe realizar respaldos automáticos de la base de datos y permitir la recuperación ante fallos
+
+
+
+## Notas para el desarrollo ##
+
+
+El IdP (Proveedor de Identidad) de INACAP esServicios de federación de Active Directory (AD FS) de Microsoft. 
+Esto se puede deducir a través de los siguientes indicadores:
+Dominio de inicio de sesión : Cuando los usuarios inician sesión en servicios de INACAP que utilizan autenticación única (SSO), como el correo institucional de Office 365, son redirigidos al dominio adfs.inacap.cl.
+Página de inicio de sesión : La página de inicio de sesión única tiene un formato característico del sistema de AD FS.
+Integración con servicios de Microsoft : La federación de identidad se utiliza para gestionar el acceso a productos de Microsoft como Office 365, lo que confirma la implementación de AD FS para este propósito. 
+En resumen, AD FS permite a INACAP proporcionar un inicio de sesión única (SSO) seguro para sus estudiantes y colaboradores, utilizando sus credenciales institucionales para acceder a diversas plataformas. 
+
+-Nunca pidas ni almacenes la contraseña institucional en tu backend/app si existe un IdP: siempre redirigir al IdP (SSO).
+-Usar OAuth2/OIDC con PKCE en móviles.
+-Almacenar tokens en almacenamiento seguro: Keychain (iOS) / EncryptedSharedPreferences o Keystore (Android).
+-Usar HTTPS en todas las comunicaciones.
+-Implementar refresh tokens con rotación o delegar refresh token al backend para mayor seguridad.
+-Validar servidor-side que el email tiene dominio INACAP y opcionalmente validar roles/atributos via claims.
+-Log de accesos y posibilidad de revocar tokens.
+
+
+##  Para el desarrollo de Multi Plataforma
+
+
+Flutter (Google)
+Pros: alto rendimiento, UI consistente, excelente para dispositivos iOS/Android con una sola base de código, buena documentación, hot reload, comunidad grande.
+Plugins: flutter_appauth (OIDC/OAuth), firebase_messaging (notificaciones), flutter_secure_storage (almacenamiento seguro).
+Ideal si priorizas UI nativa-like y desarrollo rápido.
+React Native
+Pros: amplio ecosistema JS, plugins para autenticación (react-native-app-auth), buena para equipos con experiencia JS/React.
+Cons: a veces hay que escribir módulos nativos para funcionalidades complejas.
+Xamarin / MAUI o Kotlin Multiplatform
+Pros: opciones para C# o reuse de lógica Kotlin; menos comunidad que Flutter/React Native.
+Recomendación: si empiezas desde cero y quieres mejor rendimiento y experiencia nativa, recomiendo Flutter; si el equipo es JS-heavy, React Native.
+
+
+## Publicación y requisitos
+
+iOS: cuenta Apple Developer (pago anual), provisioning profiles, certificados, cumplimiento App Store guidelines (privacidad, permisos).
+Android: Google Play Console (cuenta desarrollador), firma de APK/AAB.
+TestFlight para iOS, Google Play internal testing / alpha/beta tracks para Android.
+Certificados y gestión de versiones (build, CI/CD).
+
