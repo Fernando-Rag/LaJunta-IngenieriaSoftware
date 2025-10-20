@@ -12,33 +12,40 @@ Este proyecto tiene como idea principal crear una apliacion mobil para nuestra i
 1-Registro y autenticación
 
 -Acceso mediante correo institucional para validar usuarios
+    -El IdP (Proveedor de Identidad) de INACAP esServicios de federación de Active Directory (AD FS) de Microsoft.
 -Perfil básico: nombre, rol (estudiante, maestro, trabajador), sede, horarios de salida, destino usual
+    -estos los tendra que agregar en el perfil una vez inicie sesion con el correo de inacap por lo que el resgistro como tal no es necesario pero si se necesita un correo en la institucion de inacap
 
 2-Chats y filtros
 
--Selecciona destino (paradero específico)
--Selecciona hora de salida (según horario académico/laboral)
--Chats para cada hora del dia tomando encuenta el destino seleccionado o paradero
+-Selecciona destino (paradero específico) mediante la seleccion del mapa
+-Selecciona hora del chat
+-Chats para cada hora del dia tomando encuenta el  paradero seleccionado 
 -Chat privado entre usuarios (para coordinar detalles)
 
 3-Notificaciones y recordatorios
 
--Avisos cuando la hora de salida se aproxima
+-Avisos cuando la hora de la reunion se aproxima
+    notificacion para avisar
 -Notificaciones de nuevos mensajes o respuestas
 
 4-Seguridad y privacidad:
 
 -Permitir ocultar ciertos datos personales
+    -menos correo y rol(Estudiante, docente, etc.)
+
 -Reportar usuarios o mensajes inapropiados
+    - se puede reportar a los usuarios por la aplicacion esta funcion requiere un screenshot para evidencia
+    - no se van a poder enviar imagenes por la aplicacion para evitar mensajes pasados de contexto
 
 
 ## Flujo de uso principal ##
 
--El usuario ingresa y selecciona su horario de salida y destino.
--Puede ver quién más sale a esa hora y va al mismo lugar.
--Puede publicar una “convocatoria” en el chat global o responder a otros.
+-El usuario ingresa y selecciona su horario de salida y paradero al que se dirige.
+-Puede ver en los chat globales y informarse quien más sale a esa hora y va al mismo Paradero(anterior mente seleccionado).
+-Puede publicar una “Reunnion” en el chat global y privado o unirse a otras en el chat global 
 -Puede enviar mensajes privados para acordar detalles (lugar exacto, hora, etc.).
--Se reúnen en la sede en el punto acordado y van juntos al paradero.
+-Se reúnen en la sede en el punto acordado y van juntos al paradero(Las reuniones solo pueden ser dentro del perimetro de la sede)
 
 
 
@@ -48,8 +55,7 @@ Este proyecto tiene como idea principal crear una apliacion mobil para nuestra i
 
 1-Registro y Autenticación
 
--El sistema debe permitir el registro de usuarios mediante correo institucional
-
+-El sistema debe permitir el acceso de usuarios mediante correo institucional no es necesario un registro
 -El sistema debe autenticar usuario
     -No abra diferencia si son maestro, estudiantes o trabajadores ya que esta es una aplicacion para mantener la seguridad de la personas no hacer vida social. mantener la integridad y seguridad de los usuarios es la prioridad numero 1, de todas formas si los profesores quieren irse con profesores o los estudiantes solo con estudiantes pueden ver el rol en el perfil para decidir si quieren ir o no con esa persona. es a criterio de cada persona.
 
@@ -100,10 +106,11 @@ destino habitual, pero el correo institucional no se puede editar ya que tiene q
 5-Chat Privado
 
 -El usuario debe poder enviar mensajes privados a otros usuarios.
+-El usuario debe poder crear una "reunion" (con las opciones anteriomente mencionadas)
 
 6-Notificaciones
 
--El sistema debe enviar notificaciones cuando se acerca la hora de salida o cuando hay mensajes nuevos
+-El sistema debe enviar notificaciones cuando se acerca la hora de la reunion
 
 7-Gestión de Seguridad
 
@@ -196,3 +203,13 @@ Android: Google Play Console (cuenta desarrollador), firma de APK/AAB.
 TestFlight para iOS, Google Play internal testing / alpha/beta tracks para Android.
 Certificados y gestión de versiones (build, CI/CD).
 
+
+## Para la base de datos voy a ocupar SupaBase
+
+-Recomendaciones arquitectónicas concretas con Supabase
+
+-Usa la Auth de Supabase + tabla profiles (relacionada con auth.users).
+-Activa PostGIS en la base de datos y almacena stops como geography(Point, 4326) o geometry(Point,4326) para ST_DWithin y ST_Distance.
+-Usa la tabla chat_messages como fuente de verdad; suscripciones realtime se pueden hacer filtrando por stop_id, bus_number y hour_bucket.
+-Para notificaciones push: crea un worker/Edge Function que se dispare cuando se inserte un mensaje (trigger → NOTIFY → worker, o escucha Realtime) y llame a FCM/APNs.
+-En el flujo de registro, restringe por dominio institucional con una Edge Function o con una política (ver ejemplo abajo).
