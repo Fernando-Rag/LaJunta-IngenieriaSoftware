@@ -13,7 +13,7 @@ Este proyecto tiene como idea principal crear una apliacion mobil para nuestra i
 
 -Acceso mediante correo institucional para validar usuarios
     -El IdP (Proveedor de Identidad) de INACAP esServicios de federación de Active Directory (AD FS) de Microsoft.
--Perfil básico: nombre, rol (estudiante, maestro, trabajador), sede, horarios de salida, destino usual
+-Perfil básico: nombre, rol (estudiante, maestro, trabajador), sede, destino usual.
     -estos los tendra que agregar en el perfil una vez inicie sesion con el correo de inacap por lo que el resgistro como tal no es necesario pero si se necesita un correo en la institucion de inacap
 
 2-Chats y filtros
@@ -41,7 +41,8 @@ Este proyecto tiene como idea principal crear una apliacion mobil para nuestra i
 
 ## Flujo de uso principal ##
 
--El usuario ingresa y selecciona su horario de salida y paradero al que se dirige.
+-El usuario ingresa a la aplicacion, Selecciona el paradero al que se dirige con las micros que le sirven 
+-Selecciona un chat global segun su  horario de salida.
 -Puede ver en los chat globales y informarse quien más sale a esa hora y va al mismo Paradero(anterior mente seleccionado).
 -Puede publicar una “Reunnion” en el chat global y privado o unirse a otras en el chat global 
 -Puede enviar mensajes privados para acordar detalles (lugar exacto, hora, etc.).
@@ -62,7 +63,7 @@ Este proyecto tiene como idea principal crear una apliacion mobil para nuestra i
 2-Gestión de Perfil
 
 -El usuario debe poder editar su perfil, incluyendo su nombre, rol(Estudiante,Docente,Trabajador, etc.), sede,
-destino habitual, pero el correo institucional no se puede editar ya que tiene que tener el correo de inacap para poder acceder
+ pero el correo institucional no se puede editar ya que tiene que tener el correo de inacap para poder acceder
 
 
 3-Creación y Gestión de Reuniones/Juntas
