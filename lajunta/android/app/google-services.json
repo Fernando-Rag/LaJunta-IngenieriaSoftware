@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "987868676574",
+    "project_id": "lajunta-igsofware",
+    "storage_bucket": "lajunta-igsofware.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:987868676574:android:e9cdbc2e930336a78c9d4f",
+        "android_client_info": {
+          "package_name": "com.example.lajunta"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDS7-Yfr2eTFs4chhWDbs5FczZMtiVLaXY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
