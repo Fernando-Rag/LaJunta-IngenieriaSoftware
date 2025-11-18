@@ -27,3 +27,52 @@ exports.blockInvalidDomain = functions.auth.user().onCreate(async (user) => {
 
 setGlobalOptions({ maxInstances: 10 });
 
+
+// Notifica cuando llega un mensaje privado (DM)
+exports.notifyOnDmMessage = functions.firestore
+  .document('dmChats/{chatId}/messages/{messageId}')
+  .onCreate(async (snap, context) => {
+    const message = snap.data();
+    const chatId = context.params.chatId;
+
+    // Obtener participantes desde el chat raíz
+    const chatRef = admin.firestore().collection('dmChats').doc(chatId);
+    const chatDoc = await chatRef.get();
+    if (!chatDoc.exists) return;
+    const chat = chatDoc.data() || {};
+    const participants = chat.participants || [];
+    const senderUid = message.uid;
+    const targetUid = participants.find((u) => u !== senderUid);
+    if (!targetUid) return;
+
+    // Buscar token FCM del receptor
+    const userDoc = await admin.firestore().collection('users').doc(targetUid).get();
+    const token = userDoc.exists ? userDoc.get('fcmToken') : null;
+    if (!token) return;
+
+    const bodyText = message.text && message.text.length > 120
+      ? message.text.substring(0, 117) + '...'
+      : (message.text || 'Nuevo mensaje privado');
+
+    const payload = {
+      notification: {
+        title: chat.participantEmails && chat.participantEmails[senderUid] ? chat.participantEmails[senderUid] : 'Nuevo mensaje privado',
+        body: bodyText,
+      },
+      data: {
+        type: 'dm',
+        chatId,
+        senderUid: senderUid,
+      },
+    };
+
+    try {
+      await admin.messaging().sendToDevice(token, payload, {
+        priority: 'high',
+      });
+      console.log('Notificación DM enviada a', targetUid);
+    } catch (err) {
+      console.error('Error enviando notificación DM:', err);
+    }
+  });
+

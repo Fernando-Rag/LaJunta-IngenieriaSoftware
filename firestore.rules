@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() { return request.auth != null; }
+
+    // User profiles
+    match /users/{uid} {
+      allow read, create, update: if isSignedIn() && request.auth.uid == uid;
+      allow delete: if false;
+    }
+
+    match /chats/{chatId} {
+      // Allow signed-in users to read chat container docs (if any)
+      allow read: if isSignedIn();
+
+      // Messages subcollection
+      match /messages/{messageId} {
+        allow read: if isSignedIn();
+
+        // Create messages for self only, with sane shape
+        allow create: if isSignedIn()
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.keys().hasOnly(['text','uid','email','createdAt'])
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 2000;
+
+        // Only the author can delete their own message
+        allow delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+
+        // Avoid arbitrary updates to existing messages
+        allow update: if false;
+      }
+
+      // Typing indicator subcollection
+      match /typing/{userId} {
+        allow read: if isSignedIn();
+
+        // Only the owner can create/update/delete their typing doc
+        allow create, update: if isSignedIn()
+          && userId == request.auth.uid
+          && request.resource.data.keys().hasOnly(['uid','email','updatedAt'])
+          && request.resource.data.uid == request.auth.uid;
+        allow delete: if isSignedIn() && userId == request.auth.uid;
+      }
+    }
+
+    // Private (direct) messages between two users
+    match /dmChats/{chatId} {
+      allow read: if isSignedIn() && (request.auth.uid in resource.data.participants);
+
+      // Create DM doc must include current user in participants
+      allow create: if isSignedIn()
+        && (request.resource.data.participants is list)
+        && (request.auth.uid in request.resource.data.participants);
+
+      // Only participants can update metadata
+      allow update: if isSignedIn() && (request.auth.uid in resource.data.participants);
+
+      match /messages/{messageId} {
+        // Only participants can read
+        allow read: if isSignedIn() && (request.auth.uid in get(/databases/$(database)/documents/dmChats/$(chatId)).data.participants);
+
+        // Only participants can write their own message
+        allow create: if isSignedIn()
+          && (request.auth.uid in get(/databases/$(database)/documents/dmChats/$(chatId)).data.participants)
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.keys().hasOnly(['text','uid','email','createdAt'])
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 2000;
+
+        // Only the author can delete their own message
+        allow delete: if isSignedIn()
+          && (request.auth.uid in get(/databases/$(database)/documents/dmChats/$(chatId)).data.participants)
+          && resource.data.uid == request.auth.uid;
+
+        allow update: if false;
+      }
+    }
+  }
+}
