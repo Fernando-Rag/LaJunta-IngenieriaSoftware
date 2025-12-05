@@ -82,24 +82,29 @@ service cloud.firestore {
         );
 
         match /messages/{messageId} {
-          // Only participants can read
+          // Solo participantes pueden leer
           allow read: if isSignedIn() && (request.auth.uid in get(/databases/$(database)/documents/dmChats/$(chatId)).data.participants);
 
-          // Only participants can write their own message
+          // Solo participantes pueden crear su propio mensaje (permitiendo readBy vacío)
           allow create: if isSignedIn()
             && (request.auth.uid in get(/databases/$(database)/documents/dmChats/$(chatId)).data.participants)
             && request.resource.data.uid == request.auth.uid
-            && request.resource.data.keys().hasOnly(['text','uid','email','createdAt'])
+            && request.resource.data.keys().hasOnly(['text','uid','email','createdAt','readBy'])
             && request.resource.data.text is string
             && request.resource.data.text.size() > 0
-            && request.resource.data.text.size() <= 2000;
+            && request.resource.data.text.size() <= 2000
+            && (request.resource.data.readBy is list);
 
-          // Only the author can delete their own message
+          // Solo el autor puede borrar su mensaje
           allow delete: if isSignedIn()
             && (request.auth.uid in get(/databases/$(database)/documents/dmChats/$(chatId)).data.participants)
             && resource.data.uid == request.auth.uid;
 
-          allow update: if false;
+          // Permitir actualizar el campo readBy aunque se agregue por primera vez
+          allow update: if isSignedIn()
+            && (request.auth.uid in get(/databases/$(database)/documents/dmChats/$(chatId)).data.participants)
+            && request.resource.data.keys().hasAll(resource.data.keys())
+            && request.resource.data.diff(resource.data).changedKeys().hasOnly(['readBy']);
         }
       }
 
