@@ -50,19 +50,28 @@ exports.notifyOnDmMessage = functions.firestore
     const token = userDoc.exists ? userDoc.get('fcmToken') : null;
     if (!token) return;
 
-    const bodyText = message.text && message.text.length > 120
-      ? message.text.substring(0, 117) + '...'
-      : (message.text || 'Nuevo mensaje privado');
+    // Contar mensajes no leídos del receptor en este chat
+    const msgsSnap = await chatRef.collection('messages').get();
+    let unreadCount = 0;
+    msgsSnap.forEach((msg) => {
+      const d = msg.data();
+      if (d.uid !== targetUid && !(Array.isArray(d.readBy) && d.readBy.includes(targetUid))) {
+        unreadCount++;
+      }
+    });
+
+    if (unreadCount === 0) return; // No notificar si no hay mensajes nuevos
 
     const payload = {
       notification: {
         title: chat.participantEmails && chat.participantEmails[senderUid] ? chat.participantEmails[senderUid] : 'Nuevo mensaje privado',
-        body: bodyText,
+        body: unreadCount === 1 ? 'Tienes 1 mensaje nuevo' : `Tienes ${unreadCount} mensajes nuevos`,
       },
       data: {
         type: 'dm',
         chatId,
         senderUid: senderUid,
+        unreadCount: unreadCount.toString(),
       },
     };
 
@@ -70,7 +79,7 @@ exports.notifyOnDmMessage = functions.firestore
       await admin.messaging().sendToDevice(token, payload, {
         priority: 'high',
       });
-      console.log('Notificación DM enviada a', targetUid);
+      console.log('Notificación DM enviada a', targetUid, 'con', unreadCount, 'no leídos');
     } catch (err) {
       console.error('Error enviando notificación DM:', err);
     }

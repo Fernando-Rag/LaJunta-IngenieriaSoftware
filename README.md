@@ -214,3 +214,8 @@ Certificados y gestión de versiones (build, CI/CD).
 -Usa la tabla chat_messages como fuente de verdad; suscripciones realtime se pueden hacer filtrando por stop_id, bus_number y hour_bucket.
 -Para notificaciones push: crea un worker/Edge Function que se dispare cuando se inserte un mensaje (trigger → NOTIFY → worker, o escucha Realtime) y llame a FCM/APNs.
 -En el flujo de registro, restringe por dominio institucional con una Edge Function o con una política (ver ejemplo abajo).
+
+
+## Correr app com chrome
+
+flutter run -d chrome
