@@ -62,9 +62,17 @@ exports.notifyOnDmMessage = functions.firestore
 
     if (unreadCount === 0) return; // No notificar si no hay mensajes nuevos
 
+    // Obtener nombre si existe, si no el correo
+    let senderNameOrEmail = 'Nuevo mensaje privado';
+    if (chat.participantNames && chat.participantNames[senderUid]) {
+      senderNameOrEmail = chat.participantNames[senderUid];
+    } else if (chat.participantEmails && chat.participantEmails[senderUid]) {
+      senderNameOrEmail = chat.participantEmails[senderUid];
+    }
+
     const payload = {
       notification: {
-        title: chat.participantEmails && chat.participantEmails[senderUid] ? chat.participantEmails[senderUid] : 'Nuevo mensaje privado',
+        title: `${senderNameOrEmail} te envió un mensaje`,
         body: unreadCount === 1 ? 'Tienes 1 mensaje nuevo' : `Tienes ${unreadCount} mensajes nuevos`,
       },
       data: {
