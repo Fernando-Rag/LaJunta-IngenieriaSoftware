@@ -218,4 +218,4 @@ Certificados y gestión de versiones (build, CI/CD).
 
 ## Correr app com chrome
 
-flutter run -d chrome
+flutter run -d chrome 
