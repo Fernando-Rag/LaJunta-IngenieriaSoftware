@@ -24,7 +24,7 @@ admin.initializeApp();
 
 
 // Notifica cuando llega un mensaje privado (DM)
-exports.notifyOnDmMessage = functions.firestore.document('dmChats/{chatId}/messages/{messageId}').onCreate(async (snap, context) => {
+exports.notifyOnDmMessage = functions.region('southamerica-east1').firestore.document('dmChats/{chatId}/messages/{messageId}').onCreate(async (snap, context) => {
   const message = snap.data();
   const chatId = context.params.chatId;
 
