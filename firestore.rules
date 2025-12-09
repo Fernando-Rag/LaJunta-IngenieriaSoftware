@@ -32,7 +32,7 @@ service cloud.firestore {
           // Create messages for self only, with sane shape
           allow create: if isSignedIn()
             && request.resource.data.uid == request.auth.uid
-            && request.resource.data.keys().hasOnly(['type','text','uid','email','createdAt','juntaId','creatorUid','creatorEmail','hora','slot','lugar'])
+            && request.resource.data.keys().hasOnly(['type','text','uid','email','createdAt','juntaId','creatorUid','creatorEmail','hora','slot','lugar','linea','direccion'])
             && (
               (request.resource.data.type == 'text' && request.resource.data.text is string && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 2000)
               ||
