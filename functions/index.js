@@ -56,24 +56,41 @@ exports.notifyOnDmMessage = functions.region('southamerica-east1').firestore.doc
 
   if (unreadCount === 0) return; // No notificar si no hay mensajes nuevos
 
-  // Obtener nombre si existe, si no el correo
-  let senderNameOrEmail = 'Nuevo mensaje privado';
-  if (chat.participantNames && chat.participantNames[senderUid]) {
-    senderNameOrEmail = chat.participantNames[senderUid];
-  } else if (chat.participantEmails && chat.participantEmails[senderUid]) {
-    senderNameOrEmail = chat.participantEmails[senderUid];
+
+  // Solo mostrar el correo del remitente
+  let senderEmail = '';
+  if (chat.participantEmails && chat.participantEmails[senderUid]) {
+    senderEmail = chat.participantEmails[senderUid];
+  } else {
+    senderEmail = 'Nuevo mensaje privado';
   }
+
+  // Icono personalizado (debe existir en mipmap/ic_launcher)
+  const androidNotification = {
+    icon: 'ic_notification', // nombre del icono en drawable
+    color: '#FF4A4A', // color de la app
+    clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+    channelId: 'default',
+    priority: 'high',
+  };
 
   const payload = {
     notification: {
-      title: `${senderNameOrEmail} te envió un mensaje`,
-      body: unreadCount === 1 ? 'Tienes 1 mensaje nuevo' : `Tienes ${unreadCount} mensajes nuevos`,
+      title: senderEmail,
+      body: unreadCount === 1 ? '1 mensaje nuevo' : `${unreadCount} mensajes nuevos`,
+      icon: 'ic_notification',
+      click_action: 'FLUTTER_NOTIFICATION_CLICK',
+      color: '#FF4A4A',
+      channel_id: 'default',
     },
+    android: androidNotification,
     data: {
       type: 'dm',
       chatId,
       senderUid: senderUid,
       unreadCount: unreadCount.toString(),
+      senderEmail: senderEmail,
+      click_action: 'FLUTTER_NOTIFICATION_CLICK',
     },
   };
 
