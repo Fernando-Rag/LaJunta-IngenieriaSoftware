@@ -65,9 +65,8 @@ exports.notifyOnDmMessage = functions.region('southamerica-east1').firestore.doc
     senderEmail = 'Nuevo mensaje privado';
   }
 
-  // Icono personalizado (debe existir en mipmap/ic_launcher)
+  // Notificación Android sin icono personalizado
   const androidNotification = {
-    icon: 'ic_notification', // nombre del icono en drawable
     color: '#FF4A4A', // color de la app
     clickAction: 'FLUTTER_NOTIFICATION_CLICK',
     channelId: 'default',
@@ -78,7 +77,7 @@ exports.notifyOnDmMessage = functions.region('southamerica-east1').firestore.doc
     notification: {
       title: senderEmail,
       body: unreadCount === 1 ? '1 mensaje nuevo' : `${unreadCount} mensajes nuevos`,
-      icon: 'ic_notification',
+      // icon: 'ic_notification', // Eliminado para evitar problemas
       click_action: 'FLUTTER_NOTIFICATION_CLICK',
       color: '#FF4A4A',
       channel_id: 'default',
